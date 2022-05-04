@@ -4,6 +4,8 @@ import {useState, useEffect} from "react"
 
 const Container = styled.div`
   padding: 0px 20px;
+  max-width:480px;
+  margin:0 auto;
 `;
 
 const Header = styled.div`
@@ -24,10 +26,11 @@ const Coin = styled.li`
   margin-bottom:10px;
   height:50px;
   a{
+    display:flex;
+    align-items:center;
     transition:color 0.2s ease-in;
-    display:block;
     padding:30px;
-
+    
   }
   &:hover{
     a{
@@ -48,6 +51,11 @@ const Title = styled.h1`
 const Loader = styled.span`
   text-align:center
   display:block;
+`
+const Img = styled.img`
+  width:30px;
+  height:30px;
+  margin-right:10px;
 `
 
 const coins = [
@@ -96,26 +104,32 @@ export default function Coins(){
   const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
+
     (async()=>{
       setLoading(true)
      const response = await (await fetch("https://api.coinpaprika.com/v1/coins")).json()
       setCoins(response.slice(0,100))
       setLoading(false)
-
     })()
+
   },[])
 
   return (
     <Container>
-      {loading && <Loader>"Loading..."</Loader>}
       <Header>
         <Title>코인</Title>
       </Header>
+      {loading && <Loader>"Loading..."</Loader>}
+
       <CoinsList>
         {coins?.map(coin=>
         (
           <Coin key={coin.id}>
-            <Link to={`/${coin.id}`}>
+            <Link 
+              to={`/${coin.id}`}
+              state={{ name: coin.name, rank: coin.rank }}
+              >
+              <Img src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}/>
             {coin.name} &rarr;
             </Link>
           </Coin>
